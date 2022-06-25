@@ -1,12 +1,11 @@
 import React from "react";
 
-export default function DirectoryPicker(props) {
+export default function FilesPicker(props) {
   return (
     <React.Fragment>
       <input
-        directory=""
-        webkitdirectory=""
         type="file"
+        multiple
         onChange={props.changeHandler}
       />
     </React.Fragment>
