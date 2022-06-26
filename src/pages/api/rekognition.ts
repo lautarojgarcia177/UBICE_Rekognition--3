@@ -1,55 +1,36 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { AWSCredentials } from '../../../interfaces';
-import { UBICEAWSClient } from '../../../lib/aws-rekognition';
-import busby from 'busboy';
+import multer from 'multer';
+import nc from "next-connect";
 
 const credentials: AWSCredentials = {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 };
 
+const upload = multer();
+
 export const config = {
     api: {
-        // bodyParser: false,
+        bodyParser: false,
         responseLimit: false
     },
 }
 
-export default function rekognitionHandler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method === 'POST') {
-        const bb = busby({ 
-            headers: req.headers,
-            limits: {
-                fieldNameSize: 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
-                fieldSize: 1000000000000000000000000000000000000000000000000000000000000000000000000000000000000,
-                headerPairs: 1000000000000000000000000000000000000000000000000000000000000000000000
-            }
-         });
+const handler = nc<NextApiRequest, NextApiResponse>({
+    onError: (err, req, res, next) => {
+        console.error(err.stack);
+        res.status(500).end("Something broke!");
+    },
+    onNoMatch: (req, res) => {
+        res.status(404).end("Page is not found");
+    },
+}).use(upload.array('file'))
+    .post((req, res) => {
+        console.log(req.files);
         res.status(200).send('ok');
-        // bb.on('file', (name, file, info) => {
-        //     const { filename, encoding, mimeType } = info;
-        //     console.log(
-        //         `File [${name}]: filename: %j, encoding: %j, mimeType: %j`,
-        //         filename,
-        //         encoding,
-        //         mimeType
-        //     );
-        //     file.on('data', (data) => {
-        //         console.log(`File [${name}] got ${data.length} bytes`);
-        //     }).on('close', () => {
-        //         console.log(`File [${name}] done`);
-        //     });
-        // });
-        // bb.on('field', (name, val, info) => {
-        //     console.log(`Field [${name}]: value: %j`, val);
-        // });
-        // bb.on('close', () => {
-        //     console.log('Done parsing form!');
-        //     res.writeHead(303, { Connection: 'close', Location: '/' });
-        //     res.end();
-        // });
-        // req.pipe(bb);
-    }
-}
+    })
+
+export default handler;
 
 

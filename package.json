@@ -16,8 +16,10 @@
     "busboy": "^1.6.0",
     "exiftool": "^0.0.3",
     "framer-motion": "^6.3.0",
+    "multer": "^1.4.5-lts.1",
     "multiparty": "^4.2.3",
     "next": "latest",
+    "next-connect": "^0.12.2",
     "node-exiftool": "^2.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -25,6 +27,7 @@
   },
   "devDependencies": {
     "@aws-sdk/types": "^3.110.0",
+    "@types/multer": "^1.4.7",
     "@types/node": "^18.0.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
