@@ -32,26 +32,44 @@ class UBICEAWSClient {
    * @param {image} image file to rekognize
    */
   rekognize(image): Promise<any> {
-    return toBase64(image).then(base64Img => {
-      const command = new DetectTextCommand({
-        Image: {
-          Bytes: image
+    const command = new DetectTextCommand({
+      Image: {
+        Bytes: image
+      },
+      Filters: {
+        WordFilter: {
+          MinConfidence: 95,
         },
-        Filters: {
-          WordFilter: {
-            MinConfidence: 95,
-          },
-        }
-      });
-      this.client.send(command)
-        .then((res) =>
-          res.TextDetections.filter((textDetection) =>
-            useRegex(textDetection.DetectedText)
-          )
-            .filter((textDetection) => textDetection.Type === 'WORD')
-            .map((textDetection) => textDetection.DetectedText)
-        );
+      }
     });
+    return this.client.send(command)
+      .then((res) =>
+        res.TextDetections.filter((textDetection) =>
+          useRegex(textDetection.DetectedText)
+        )
+          .filter((textDetection) => textDetection.Type === 'WORD')
+          .map((textDetection) => textDetection.DetectedText)
+      );
+    // return toBase64(image).then(base64Img => {
+    //   const command = new DetectTextCommand({
+    //     Image: {
+    //       Bytes: image
+    //     },
+    //     Filters: {
+    //       WordFilter: {
+    //         MinConfidence: 95,
+    //       },
+    //     }
+    //   });
+    //   this.client.send(command)
+    //     .then((res) =>
+    //       res.TextDetections.filter((textDetection) =>
+    //         useRegex(textDetection.DetectedText)
+    //       )
+    //         .filter((textDetection) => textDetection.Type === 'WORD')
+    //         .map((textDetection) => textDetection.DetectedText)
+    //     );
+    // });
   }
 }
 

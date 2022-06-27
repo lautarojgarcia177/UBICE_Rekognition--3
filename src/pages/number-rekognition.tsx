@@ -1,7 +1,6 @@
 import { Container, Heading, Text } from "@chakra-ui/react";
 import DirectoryPicker from "../components/directory-picker";
 import FilesPicker from "../components/files-picker";
-import axios from "axios";
 
 export default function NumberRekognitionPage() {
   async function filesSelectedHandler(event) {
@@ -10,24 +9,15 @@ export default function NumberRekognitionPage() {
     for (var x = 0; x < files.length; x++) {
       data.append("file", files[x]);
     }
-    axios
-      .post(
-        "/api/rekognition",
-        {
-          data,
-        },
-        {
-          headers: {
-            "Transfer-Encoding": "multipart/form-data",
-            "Content-Type": "multipart/form-data"
-          },
-        }
-      )
-      .then(function (response) {
-        console.log(response);
+    fetch("/api/rekognition", {
+      method: "POST",
+      body: data,
+    })
+      .then((response) => {
+        console.log("yay!", response);
       })
-      .catch(function (error) {
-        console.log(error);
+      .catch((err) => {
+        console.error(err);
       });
   }
   return (
